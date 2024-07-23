@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Penetration Testing Toolkit</title>
+</head>
+<body>
+    <h1>Web Application Penetration Testing Toolkit</h1>
+    <form id="scanForm">
+        <label for="url">URL:</label>
+        <input type="text" id="url" name="url" required><br>
+        <label for="param">Parameter:</label>
+        <input type="text" id="param" name="param" required><br>
+        <label for="scan_type">Scan Type:</label>
+        <select id="scan_type" name="scan_type" required>
+            <option value="sql_injection">SQL Injection</option>
+            <option value="xss">XSS</option>
+            <option value="csrf">CSRF</option>
+        </select><br>
+        <button type="submit">Scan</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('scanForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            const param = document.getElementById('param').value;
+            const scan_type = document.getElementById('scan_type').value;
+
+            fetch('/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'url': url,
+                    'param': param,
+                    'scan_type': scan_type
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(result => {
+                    const p = document.createElement('p');
+                    p.textContent = result;
+                    resultsDiv.appendChild(p);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
